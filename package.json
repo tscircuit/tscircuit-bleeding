@@ -1,0 +1,21 @@
+{
+  "name": "tscircuit-bleeding",
+  "version": "1.0.0",
+  "description": "Bleeding untested builds of tscircuit",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test-build": "node scripts/test-build.js",
+    "clean": "rm -rf packages dist *.tgz"
+  },
+  "devDependencies": {
+    "turbo": "^1.10.0",
+    "@cloudflare/workers-types": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}

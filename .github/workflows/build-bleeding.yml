@@ -1,0 +1,91 @@
+name: Build Bleeding Edge TSCircuit
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild even if no changes'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    name: Build and Publish Bleeding Edge Package
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build bleeding edge package
+        id: build
+        run: |
+          npm run build
+        env:
+          NODE_OPTIONS: '--max-old-space-size=8192'
+
+      - name: Upload to Cloudflare R2
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_R2_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_ACCESS_KEY_ID }}
+          CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET_ACCESS_KEY }}
+          CLOUDFLARE_R2_BUCKET_NAME: ${{ secrets.CLOUDFLARE_R2_BUCKET_NAME }}
+        run: |
+          # Install AWS CLI for S3-compatible uploads
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          
+          # Configure AWS CLI for Cloudflare R2
+          aws configure set aws_access_key_id $CLOUDFLARE_R2_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $CLOUDFLARE_R2_SECRET_ACCESS_KEY
+          aws configure set default.region auto
+          
+          # Upload tarball to R2 bucket
+          TARBALL_FILE=$(ls *.tgz | head -1)
+          echo "Uploading $TARBALL_FILE to Cloudflare R2..."
+          
+          aws s3 cp "$TARBALL_FILE" "s3://$CLOUDFLARE_R2_BUCKET_NAME/tscircuit/$TARBALL_FILE" \
+            --endpoint-url "https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com" \
+            --content-type "application/gzip"
+          
+          echo "Upload complete!"
+          echo "Install with: bun add https://tarballs.tscircuit.com/tscircuit/$TARBALL_FILE"
+
+      - name: Create Release Summary
+        run: |
+          TARBALL_FILE=$(ls *.tgz | head -1)
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          
+          echo "## 🚀 Bleeding Edge Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Time:** $TIMESTAMP" >> $GITHUB_STEP_SUMMARY
+          echo "**Package:** \`$TARBALL_FILE\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "bun add https://tarballs.tscircuit.com/tscircuit/$TARBALL_FILE" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### npm Alternative" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "npm install https://tarballs.tscircuit.com/tscircuit/$TARBALL_FILE" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bleeding-edge-tarball
+          path: "*.tgz"
+          retention-days: 30
