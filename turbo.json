@@ -1,0 +1,16 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "bootstrap": {
+      "outputs": [".tscircuit-bleeding/repos/**"]
+    },
+    "build-packages": {
+      "dependsOn": ["bootstrap"],
+      "outputs": [".tscircuit-bleeding/manifests/**"]
+    },
+    "bundle": {
+      "dependsOn": ["build-packages"],
+      "outputs": ["dist/*.tgz", ".tscircuit-bleeding/packs/**", ".tscircuit-bleeding/bundle/**"]
+    }
+  }
+}
