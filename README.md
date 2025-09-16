@@ -1,5 +1,7 @@
 # tscircuit-bleeding
 
+[![Build Bleeding Edge TSCircuit](https://github.com/tscircuit/tscircuit-bleeding/actions/workflows/build-bleeding.yml/badge.svg)](https://github.com/tscircuit/tscircuit-bleeding/actions/workflows/build-bleeding.yml)
+
 Bleeding untested builds of tscircuit with all dependencies
 
 ## Overview
