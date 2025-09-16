@@ -1,36 +1,23 @@
-# dependencies (bun install)
-node_modules
+# Dependencies
+node_modules/
 
-# output
-out
-dist
+# Bun
+bun.lockb
+
+# Build system workspace
+.tscircuit-workspace/
+workspace/
+.build-system/
+
+# yalc artifacts
+.yalc/
+yalc.lock
+
+# Logs & artifacts
+artifacts/
 *.tgz
+*.log
 
-# code coverage
-coverage
-*.lcov
-
-# logs
-logs
-_.log
-report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
-
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
-
-# caches
-.eslintcache
-.cache
-*.tsbuildinfo
-
-# IntelliJ based IDEs
-.idea
-
-# Finder (MacOS) folder config
+# IDE/editor
+.vscode/
 .DS_Store
-.vscode
-.aider*

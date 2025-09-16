@@ -4,11 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "build": "bun run index.ts build",
+    "plan": "bun run index.ts plan",
+    "clean": "bun run index.ts clean",
+    "typecheck": "bunx tsc --noEmit",
     "format": "biome format --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^20.12.7"
   },
   "peerDependencies": {
     "typescript": "^5"
