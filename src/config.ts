@@ -1,31 +1,31 @@
 export interface PackageConfig {
   /** Package name used for linking */
-  name: string;
+  name: string
   /** Git repository URL */
-  repo: string;
+  repo: string
   /** Branch or ref to check out (defaults to main) */
-  ref?: string;
+  ref?: string
   /** Optional subdirectory that contains the package */
-  directory?: string;
+  directory?: string
   /** Override the install command */
-  installCommand?: string[];
+  installCommand?: string[]
   /** Override the build command */
-  buildCommand?: string[];
+  buildCommand?: string[]
   /** Whether to run `bun link` after building (defaults to true) */
-  link?: boolean;
+  link?: boolean
   /** Skip installation step */
-  skipInstall?: boolean;
+  skipInstall?: boolean
   /** Skip build step */
-  skipBuild?: boolean;
+  skipBuild?: boolean
 }
 
 export interface PackageGroup {
-  name: string;
-  packages: PackageConfig[];
+  name: string
+  packages: PackageConfig[]
 }
 
-const DEFAULT_BUILD_COMMAND = ["bun", "run", "build"];
-const DEFAULT_INSTALL_COMMAND = ["bun", "install"];
+const DEFAULT_BUILD_COMMAND = ["bun", "run", "build"]
+const DEFAULT_INSTALL_COMMAND = ["bun", "install"]
 
 export const packageGroups: PackageGroup[] = [
   {
@@ -97,9 +97,9 @@ export const packageGroups: PackageGroup[] = [
       },
     ],
   },
-];
+]
 
-export const DEFAULT_REF = "main";
-export const DEFAULT_LINK_BEHAVIOUR = true;
-export const WORKSPACE_DIRECTORY = "workdir";
-export const DIST_DIRECTORY = "dist";
+export const DEFAULT_REF = "main"
+export const DEFAULT_LINK_BEHAVIOUR = true
+export const WORKSPACE_DIRECTORY = "workdir"
+export const DIST_DIRECTORY = "dist"

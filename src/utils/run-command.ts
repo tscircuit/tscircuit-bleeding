@@ -1,36 +1,36 @@
-import { mkdir } from "node:fs/promises";
+import { mkdir } from "node:fs/promises"
 
 export interface RunCommandOptions {
-  cwd?: string;
-  env?: Record<string, string>;
+  cwd?: string
+  env?: Record<string, string>
   /** When true, stdout/stderr will be captured and returned */
-  captureOutput?: boolean;
+  captureOutput?: boolean
   /** Optional human-friendly description for logging */
-  description?: string;
+  description?: string
 }
 
 export interface RunCommandResult {
-  stdout?: string;
-  stderr?: string;
+  stdout?: string
+  stderr?: string
 }
 
 async function ensureDirectoryExists(path?: string) {
-  if (!path) return;
-  await mkdir(path, { recursive: true });
+  if (!path) return
+  await mkdir(path, { recursive: true })
 }
 
 export async function runCommand(
   cmd: string[],
   options: RunCommandOptions = {},
 ): Promise<RunCommandResult> {
-  const { cwd, env, captureOutput = false, description } = options;
+  const { cwd, env, captureOutput = false, description } = options
 
   if (description) {
-    console.log(description);
+    console.log(description)
   }
 
   if (cwd) {
-    await ensureDirectoryExists(cwd);
+    await ensureDirectoryExists(cwd)
   }
 
   const subprocess = Bun.spawn({
@@ -39,27 +39,27 @@ export async function runCommand(
     env: env ? { ...process.env, ...env } : process.env,
     stdout: captureOutput ? "pipe" : "inherit",
     stderr: captureOutput ? "pipe" : "inherit",
-  });
+  })
 
-  const exitCode = await subprocess.exited;
+  const exitCode = await subprocess.exited
 
-  let stdout: string | undefined;
-  let stderr: string | undefined;
+  let stdout: string | undefined
+  let stderr: string | undefined
 
   if (captureOutput && subprocess.stdout) {
-    stdout = await new Response(subprocess.stdout).text();
+    stdout = await new Response(subprocess.stdout).text()
   }
 
   if (captureOutput && subprocess.stderr) {
-    stderr = await new Response(subprocess.stderr).text();
+    stderr = await new Response(subprocess.stderr).text()
   }
 
   if (exitCode !== 0) {
     const errorMessage =
       `Command failed (${cmd.join(" ")}): exit code ${exitCode}` +
-      (stderr ? `\n${stderr}` : "");
-    throw new Error(errorMessage);
+      (stderr ? `\n${stderr}` : "")
+    throw new Error(errorMessage)
   }
 
-  return { stdout, stderr };
+  return { stdout, stderr }
 }

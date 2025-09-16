@@ -5,11 +5,12 @@
   "private": true,
   "scripts": {
     "build": "bun run src/index.ts build",
-    "format": "bunx prettier --write ."
+    "format": "biome format --write .",
+    "format:check": "biome format ."
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
     "@types/bun": "latest",
-    "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {
