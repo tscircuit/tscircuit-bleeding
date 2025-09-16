@@ -1,14 +1,20 @@
 {
   "name": "tscircuit-bleeding",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "format": "biome format --write ."
+    "build": "bun src/index.ts build",
+    "clean": "bun src/index.ts clean",
+    "plan": "bun src/index.ts plan",
+    "format": "biome format --write .",
+    "typecheck": "bunx tsc --noEmit"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/node": "^20.12.7",
+    "yalc": "^1.0.0-pre.53"
   },
   "peerDependencies": {
     "typescript": "^5"
